@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Position Calculator</title>
+<style>
+:root{--bg:#f3f5f8;--card:#fff;--in:#f6f8fb;--bd:#d9dfe8;--tx:#121722;--mu:#667085;--red:#c8333b;--grn:#0d8f5f;--amb:#b7791f;--acc:#0e7490;--hero:linear-gradient(135deg,#e3f4f7,#eee9fb);--box:0 0 0 1px var(--bd);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#070a10;--card:#0d1119;--in:#090c13;--bd:#1f2633;--tx:#f2f5fa;--mu:#8b94a5;--red:#ff6b6b;--grn:#34d399;--amb:#fbbf24;--acc:#5eead4;--hero:linear-gradient(135deg,#0b2a3a,#1d1442);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#070a10;--card:#0d1119;--in:#090c13;--bd:#1f2633;--tx:#f2f5fa;--mu:#8b94a5;--red:#ff6b6b;--grn:#34d399;--amb:#fbbf24;--acc:#5eead4;--hero:linear-gradient(135deg,#0b2a3a,#1d1442);color-scheme:dark}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:16px}
+.w{max-width:1000px;margin:0 auto}
+.hero{background:var(--hero);border:1px solid var(--acc);border-radius:20px;padding:22px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between}
+.big{font-size:clamp(40px,9vw,68px);font-weight:700;letter-spacing:-1px;color:var(--acc);line-height:1}
+.sm{color:var(--mu);font-size:13px}
+.tag{padding:3px 12px;border-radius:99px;font-size:12px;font-weight:700;background:rgba(52,211,153,.18);color:var(--grn)}
+.tag.s{background:rgba(255,107,107,.18);color:var(--red)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+.st{border:1px solid var(--bd);border-radius:14px;padding:12px;background:rgba(127,127,127,.08)}
+.st b{display:block;font-size:12px;margin-bottom:4px}.st i{display:block;font-style:normal;font-size:22px;font-weight:700}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+@media(max-width:780px){.g{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:20px}
+h1,h2{margin:0}h2{font-size:20px}
+label,.lb{display:block;color:var(--mu);font-size:12px;font-weight:600;margin:16px 0 6px}
+input,select{width:100%;background:var(--in);color:var(--tx);border:1px solid var(--bd);border-radius:12px;padding:11px 12px;font:inherit;font-size:16px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+button{font:inherit;color:var(--mu);background:var(--in);border:1px solid var(--bd);border-radius:9px;padding:6px 11px;cursor:pointer;font-size:13px}
+button.on{color:var(--tx);border-color:var(--acc);background:rgba(94,234,212,.12)}
+.dir{display:grid;grid-template-columns:1fr 1fr;gap:8px}.dir button{padding:11px;font-size:15px;border-radius:12px}
+.dir button.on.l{border-color:var(--grn);color:var(--grn)}.dir button.on.sh{border-color:var(--red);color:var(--red)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.seg{display:flex;gap:2px;float:right;margin-top:-4px}.seg button{padding:3px 9px;font-size:12px}
+.sub{border:1px solid var(--bd);border-radius:14px;padding:4px 14px 14px;margin-top:16px}
+.lots{font-size:56px;font-weight:700;color:var(--amb);line-height:1}
+.rl{display:flex;justify-content:space-between;padding:7px 0;color:var(--mu)}.rl b{color:var(--tx)}
+.warn{border:1px solid var(--red);color:var(--red);border-radius:12px;padding:12px;margin:12px 0;display:none}
+.bar{display:flex;height:9px;border-radius:9px;overflow:hidden;margin:14px 0 6px}
+hr{border:0;border-top:1px solid var(--bd);margin:12px 0}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="w">
+<div class="top"><h1 style="font-size:18px">Position Calculator</h1><button id="th">Theme</button></div>
+
+<div class="hero">
+ <div class="row"><span class="sm" id="hIns">XAUUSD</span><span class="tag" id="hDir">LONG</span></div>
+ <div class="row" style="margin-top:6px"><div><div class="big" id="hEntry">–</div><div class="sm">Entry price</div></div>
+ <div><span style="font-size:34px;font-weight:700;color:var(--amb)" id="hLots">0.00</span> <span class="sm">lots</span><div class="sm">Recommended size</div></div></div>
+ <div class="stats">
+  <div class="st" style="border-color:var(--red)"><b style="color:var(--red)">Stop loss</b><i id="sSL"></i><span class="sm" id="sSL2"></span></div>
+  <div class="st" style="border-color:var(--grn)"><b style="color:var(--grn)">Take profit</b><i id="sTP"></i><span class="sm" id="sTP2"></span></div>
+  <div class="st"><b>Risk : reward</b><i id="sRR"></i><span class="sm" id="sRR2"></span></div>
+  <div class="st" style="border-color:var(--amb)"><b style="color:var(--amb)">Margin</b><i id="sM"></i><span class="sm" id="sM2"></span></div>
+ </div>
+</div>
+
+<div class="g">
+<div class="card">
+ <h2>Inputs</h2><div class="sm">Position size from your risk parameters</div>
+ <label for="ins">Instrument</label><select id="ins"></select>
+ <div class="sm" id="insInfo" style="margin-top:6px"></div>
+ <div class="lb">Direction</div>
+ <div class="dir"><button class="on l" id="bL">↑ Long</button><button class="sh" id="bS">↓ Short</button></div>
+ <div class="two">
+  <div><label for="bal">Balance ($)</label><input id="bal" type="number" inputmode="decimal" value="4000" min="0">
+   <div class="chips" id="qb"></div></div>
+  <div><label for="risk">Risk (%)</label><input id="risk" type="number" inputmode="decimal" value="1" min="0" step="0.1">
+   <div class="chips" id="qr"></div></div>
+ </div>
+ <label for="lev">Leverage (1:x)</label><input id="lev" type="number" inputmode="decimal" value="2" min="1">
+ <div class="chips" id="ql"></div>
+ <div class="sub">
+  <label for="entry" style="display:flex;justify-content:space-between;align-items:center">Entry <button id="mk" style="color:var(--acc)">Use market</button></label>
+  <input id="entry" type="number" inputmode="decimal" step="any">
+  <label for="sl">Stop loss <span class="seg" id="slm"><button data-m="price">Price</button><button data-m="pips" class="on">Pips</button></span></label>
+  <input id="sl" type="number" inputmode="decimal" step="any" value="50">
+  <label for="tp">Take profit (optional) <span class="seg" id="tpm"><button data-m="price">Price</button><button data-m="pips" class="on">Pips</button><button data-m="rr">R:R</button></span></label>
+  <input id="tp" type="number" inputmode="decimal" step="any" value="100">
+ </div>
+</div>
+
+<div class="card" style="align-self:start">
+ <div class="lb" style="margin-top:0">Recommended position size</div>
+ <div class="row" style="align-items:center"><div><span class="lots" id="rLots">0.00</span> <span class="sm">lots</span></div><span class="tag" id="rDir">LONG</span></div>
+ <div class="sm" id="rUnits" style="margin-top:6px"></div>
+ <div class="warn" id="warn">Margin required exceeds your balance. Use higher leverage or a smaller risk.</div>
+ <hr>
+ <div class="rl">Risk amount<b id="r1" style="color:var(--red)"></b></div>
+ <div class="rl">Actual risk (rounded lots)<b id="r2"></b></div>
+ <div class="rl">Stop loss price<b id="r3" style="color:var(--red)"></b></div>
+ <div class="rl">Take profit price<b id="r4" style="color:var(--grn)"></b></div>
+ <div class="rl">Potential profit<b id="r5" style="color:var(--grn)"></b></div>
+ <div class="rl">Risk : reward<b id="r6"></b></div>
+ <div class="rl">Notional value<b id="r7"></b></div>
+ <div class="rl">Margin required<b id="r8"></b></div>
+ <hr>
+ <div class="lb" style="margin:0">Risk vs reward</div>
+ <div class="bar"><span id="bRisk" style="background:var(--red)"></span><span id="bRew" style="background:var(--grn)"></span></div>
+ <div class="row sm"><span id="tR"></span><span id="tW"></span></div>
+ <p class="sm" style="margin-top:14px">Market prices are sample values, so edit Entry to match your broker. Contract sizes: gold 100 oz, silver 5,000 oz, oil 1,000 bbl, forex 100,000 units, crypto and indices 1 unit. Check against your broker before trading.</p>
+</div>
+</div>
+</div>
+
+<script>
+var one=function(){return 1},inv=function(e){return 1/e},px=function(e){return e},jpyf=function(){return 1/I.USDJPY.px},eur=function(){return I.EURUSD.px},gbp=function(){return I.GBPUSD.px};
+var I={XAUUSD:{pip:.01,cs:100,d:2,t:'Commodity',px:3995.63,f:one,n:px},XAGUSD:{pip:.001,cs:5000,d:3,t:'Commodity',px:54.55,f:one,n:px},USOIL:{pip:.01,cs:1000,d:2,t:'Commodity',px:70,f:one,n:px},
+EURUSD:{pip:.0001,cs:100000,d:5,t:'Forex',px:1.1204,f:one,n:px},GBPUSD:{pip:.0001,cs:100000,d:5,t:'Forex',px:1.3375,f:one,n:px},AUDUSD:{pip:.0001,cs:100000,d:5,t:'Forex',px:.66,f:one,n:px},NZDUSD:{pip:.0001,cs:100000,d:5,t:'Forex',px:.6,f:one,n:px},
+USDJPY:{pip:.01,cs:100000,d:3,t:'Forex',px:150,f:inv,n:one},USDCHF:{pip:.0001,cs:100000,d:5,t:'Forex',px:.8,f:inv,n:one},USDCAD:{pip:.0001,cs:100000,d:5,t:'Forex',px:1.39,f:inv,n:one},
+EURGBP:{pip:.0001,cs:100000,d:5,t:'Forex',px:.838,f:gbp,n:eur},EURJPY:{pip:.01,cs:100000,d:3,t:'Forex',px:168,f:jpyf,n:eur},GBPJPY:{pip:.01,cs:100000,d:3,t:'Forex',px:200.9,f:jpyf,n:gbp},
+BTCUSD:{pip:1,cs:1,d:2,t:'Crypto',px:95000,f:one,n:px},ETHUSD:{pip:.1,cs:1,d:2,t:'Crypto',px:3500,f:one,n:px},
+US30:{pip:1,cs:1,d:1,t:'Index',px:44000,f:one,n:px},NAS100:{pip:1,cs:1,d:1,t:'Index',px:21000,f:one,n:px},SPX500:{pip:1,cs:1,d:1,t:'Index',px:6000,f:one,n:px}};
+var $=function(i){return document.getElementById(i)};
+var st={dir:1,slm:'pips',tpm:'pips',ins:'XAUUSD'};
+var M=function(n){return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})};
+var N=function(n,d){return n.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})};
+function safe(f){try{return f()}catch(e){}}
+Object.keys(I).forEach(function(k){var o=document.createElement('option');o.textContent=k;$('ins').appendChild(o)});
+function chips(id,vals,fn,fmt){vals.forEach(function(v){var b=document.createElement('button');b.textContent=fmt(v);b.onclick=function(){fn(v)};b.dataset.v=v;$(id).appendChild(b)})}
+chips('qb',[5000,10000,25000,50000],function(v){$('bal').value=v;calc()},function(v){return '$'+v/1000+'k'});
+chips('qr',[.5,1,2,3],function(v){$('risk').value=v;calc()},function(v){return v+'%'});
+chips('ql',[2,5,10,20,30,50,100],function(v){$('lev').value=v;calc()},function(v){return '1:'+v});
+function mark(id,val){[].forEach.call($(id).children,function(b){b.classList.toggle('on',+b.dataset.v===+val)})}
+function setIns(){var c=I[st.ins];$('entry').value=c.px;$('insInfo').innerHTML='Pip: <b>'+c.pip+'</b> &nbsp; Type: <b>'+c.t+'</b>';$('hIns').textContent=st.ins}
+$('ins').onchange=function(){st.ins=this.value;setIns();calc()};
+$('mk').onclick=function(){$('entry').value=I[st.ins].px;calc()};
+function setDir(d){st.dir=d;$('bL').className=d>0?'on l':'';$('bS').className=d<0?'on sh':'sh';var t=d>0?'LONG':'SHORT';['hDir','rDir'].forEach(function(i){$(i).textContent=t;$(i).className=d>0?'tag':'tag s'});calc()}
+$('bL').onclick=function(){setDir(1)};$('bS').onclick=function(){setDir(-1)};
+function dists(){var c=I[st.ins],e=+$('entry').value,s=+$('sl').value,t=+$('tp').value,sd,td;
+ sd=st.slm==='pips'?s*c.pip:Math.abs(e-s);
+ if(!$('tp').value||!t)td=0;else td=st.tpm==='pips'?t*c.pip:st.tpm==='rr'?t*sd:Math.abs(t-e);
+ return{sd:sd,td:td}}
+function seg(id,key){[].forEach.call($(id).children,function(b){b.onclick=function(){
+ var c=I[st.ins],e=+$('entry').value,d=dists(),inp=$(key),sd=d.sd,td=d.td,old=st[key+'m'];
+ var dist=key==='sl'?sd:td,m=b.dataset.m,v;
+ if(m==='pips')v=dist/c.pip;else if(m==='rr')v=sd?td/sd:0;else v=e+(key==='sl'?-1:1)*st.dir*dist;
+ st[key+'m']=m;inp.value=v?+v.toFixed(c.d):'';
+ [].forEach.call($(id).children,function(x){x.classList.toggle('on',x===b)});calc()}})}
+seg('slm','sl');seg('tpm','tp');
+function calc(){var c=I[st.ins],e=+$('entry').value,bal=+$('bal').value,rk=+$('risk').value,lev=+$('lev').value||1,d=dists(),sd=d.sd,td=d.td;
+ mark('qb',bal);mark('qr',rk);mark('ql',lev);
+ var f=c.f(e),rAmt=bal*rk/100,lots=0,units=0;
+ if(sd>0&&e>0){lots=Math.floor(rAmt/(sd*c.cs*f)*100+1e-9)/100;units=lots*c.cs}
+ var act=units*sd*f,prof=units*td*f,notional=units*c.n(e),margin=notional/lev;
+ var slP=e-st.dir*sd,tpP=e+st.dir*td,rr=sd&&td?td/sd:0;
+ $('hEntry').textContent=N(e,c.d>3?4:2<c.d?c.d:2);$('hLots').textContent=lots.toFixed(2);$('rLots').textContent=lots.toFixed(2);
+ $('sSL').textContent=N(slP,c.d);$('sSL2').textContent='-'+M(act)+' · '+N(sd/c.pip,1)+' pips';
+ $('sTP').textContent=td?N(tpP,c.d):'–';$('sTP2').textContent=td?'+'+M(prof)+' · '+N(td/c.pip,1)+' pips':'Not set';
+ $('sRR').textContent=rr?'1 : '+rr.toFixed(2):'–';$('sRR2').textContent='Risking '+rk+'% of '+M(bal);
+ $('sM').textContent=M(margin);$('sM2').textContent='Leverage 1:'+lev+' · '+N(units,0)+' units';
+ $('rUnits').textContent='= '+N(units,0)+' units of '+st.ins+' · '+N(sd/c.pip,1)+' pips at stop';
+ $('r1').textContent=M(rAmt);$('r2').textContent=M(act);$('r3').textContent=N(slP,c.d);$('r4').textContent=td?N(tpP,c.d):'–';
+ $('r5').textContent=M(prof);$('r6').textContent=rr?'1 : '+rr.toFixed(2):'–';$('r7').textContent=M(notional);
+ $('r8').textContent=M(margin)+' ('+N(bal?margin/bal*100:0,1)+'%)';$('r8').style.color=margin>bal?'var(--red)':'';
+ $('warn').style.display=margin>bal&&lots>0?'block':'none';
+ var tot=act+prof||1;$('bRisk').style.width=act/tot*100+'%';$('bRew').style.width=prof/tot*100+'%';
+ $('tR').textContent='Risk '+M(act);$('tW').textContent='Reward '+M(prof)}
+['entry','sl','tp','bal','risk','lev'].forEach(function(i){$(i).oninput=calc});
+$('th').onclick=function(){var r=document.documentElement,dk=matchMedia('(prefers-color-scheme:dark)').matches,cur=r.dataset.theme||(dk?'dark':'light');r.dataset.theme=cur==='dark'?'light':'dark'};
+setIns();calc();
+</script>
+</body>
+</html>
